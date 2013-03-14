@@ -46,7 +46,7 @@ sub parse_credentials {
   
 sub parse_hosts {
   my $file = $ENV{"HOME"} . "/.rdp/hosts";
-  $hosts = XMLin($file);
+  $hosts = XMLin($file, ForceArray => ['group', 'host']);
 }
 
 sub print_hosts {
@@ -60,15 +60,18 @@ sub print_hosts_group {
   my ($caption, $id, $hosts, $subgroups) = @_;
   say "<menu id=\"rdp-$id\" label=\"$caption\">";
   # print all hosts
-  foreach(@{$hosts}) {
-    my $host = $_;
-    my $credentials = $credentials->{"credentials"}->{$host->{"credentials_id"}};
-    print_host_entry($host->{"caption"}, $host->{"hostname"}, $credentials->{"domain"}, $credentials->{"user"}, $credentials->{"password"});
+  if(ref($hosts) eq "ARRAY") {
+    foreach(@{$hosts}) {
+      my $host = $_;
+      my $credentials = $credentials->{"credentials"}->{$host->{"credentials_id"}};
+      print_host_entry($host->{"caption"}, $host->{"hostname"}, $credentials->{"domain"}, $credentials->{"user"}, $credentials->{"password"});
+    }
+    say "<separator/>";
   }
   # print all subgroups
   foreach(@{$subgroups}) {
   	my $group = $_;
-	print_hosts_group($group->{"caption"}, create_id($group->{"id"}), $group->{"host"}, $group->{"group"});
+    print_hosts_group($group->{"caption"}, create_id($group->{"id"}), $group->{"host"}, $group->{"group"});
   }
   say "</menu>";
   say "<separator/>";
