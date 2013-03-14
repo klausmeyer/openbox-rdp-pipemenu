@@ -32,6 +32,13 @@ my %config = (
 my $credentials = ();
 my $hosts = ();
 
+sub create_id {
+  my $caption = shift;
+  $caption = lc($caption);
+  $caption =~ s/[^a-z0-9]//g;
+  return $caption;
+}
+
 sub parse_credentials {
   my $file = $ENV{"HOME"} . "/.rdp/credentials";
   $credentials = XMLin($file, KeyAttr => { credentials => "id" });
@@ -42,30 +49,36 @@ sub parse_hosts {
   $hosts = XMLin($file);
 }
 
-sub print_hosts_menu {
-  my ($caption, $id) = @_;
+sub print_hosts {
+  foreach(@{$hosts->{"group"}}) {
+    my $group = $_;
+    print_hosts_group($group->{"caption"}, create_id($group->{"caption"}), $group->{"host"}, $group->{"group"});
+  }
+  exit;
+}
+
+sub print_hosts_group {
+  my ($caption, $id, $hosts, $subgroups) = @_;
   say "<menu id=\"rdp-$id\" label=\"$caption\">";
-  print_host_entry("Testhost", "192.168.0.1", "Domain", "myuser", "mypass");
-  print_host_entry("Testhost", "192.168.0.2", "Domain", "myuser", "mypass");
-  print_host_entry("Testhost", "192.168.0.3", "Domain", "myuser", "mypass");
+  # print all hosts
+  foreach(@{$hosts}) {
+    my $host = $_;
+    my $credentials = $credentials->{"credentials"}->{$host->{"credentials_id"}};
+    print_host_entry($host->{"caption"}, $host->{"hostname"}, $credentials->{"domain"}, $credentials->{"user"}, $credentials->{"password"});
+  }
+  # print all subgroups
   say "</menu>";
   say "<separator/>";
 }
 
 sub print_host_entry {
   my ($caption, $hostname, $domain, $username, $password) = @_;
-  say "<item label=\"$caption\">";
-  say " <action name=\"Execute\">";
-  say "   <command>";
-  say "     rdesktop -u $domain\\$username -p $password -z -g $config{'resolution'} -k $config{'keyboard_layout'} $hostname";
-  say "   </command>";
-  say " </action>";
-  say "</item>";
+  print_execute_item($caption, "rdesktop -u $domain\\$username -p $password -z -g $config{'resolution'} -k $config{'keyboard_layout'} $hostname");
 }
 
 sub print_execute_item {
   my ($caption, $command) = @_;
-  say "<item label=\"Edit ~/.rdp/hosts\">";
+  say "<item label=\"$caption\">";
   say " <action name=\"Execute\">";
   say "   <command>";
   say "     $command";
@@ -84,8 +97,7 @@ parse_hosts();
 # print the openbox xml menu to console
 say "<openbox_pipe_menu>";
 if(length($hosts) > 0) {
-  print_hosts_menu("Intranet", "intranet");
-  print_hosts_menu("Live", "live");
+  print_hosts();
 }
 print_execute_item("Edit ~/.rdp/config", "$config{'editor'} ~/.rdp/config");
 print_execute_item("Edit ~/.rdp/hosts", "$config{'editor'} ~/.rdp/hosts");
