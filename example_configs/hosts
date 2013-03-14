@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+  <group caption="Foo 1">
+    <host caption="Host A" hostname="192.168.0.1" credentials_id="foo1" />
+    <host caption="Host B" hostname="192.168.0.2" credentials_id="foo1" />
+    <host caption="Host C" hostname="192.168.0.3" credentials_id="foo1" />
+  </group>
+  <group caption="Foo 2">
+    <group caption="Foo 2.1">
+      <host caption="Host A" hostname="192.168.0.1" credentials_id="foo21" />
+      <host caption="Host B" hostname="192.168.0.2" credentials_id="foo21" />
+      <host caption="Host C" hostname="192.168.0.3" credentials_id="foo21" />
+    </group>
+    <group caption="Foo 2.2">
+      <host caption="Host A" hostname="192.168.0.1" credentials_id="foo22" />
+      <host caption="Host B" hostname="192.168.0.2" credentials_id="foo22" />
+      <host caption="Host C" hostname="192.168.0.3" credentials_id="foo22" />
+    </group>
+  </group>
+  <group caption="Foo 3">
+    <host caption="Host A" hostname="192.168.0.1" credentials_id="foo3" />
+    <host caption="Host B" hostname="192.168.0.2" credentials_id="foo3" />
+    <host caption="Host C" hostname="192.168.0.3" credentials_id="foo3" />
+  </group>
+</root>
