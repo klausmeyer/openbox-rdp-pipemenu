@@ -22,13 +22,25 @@ use strict;
 use 5.010;
 use Data::Dumper;
 use Config::Simple;
+use XML::Simple;
 
 my %config = (
   "editor" => "geany",
   "resolution" => "1280x1024",
   "keyboard_layout" => "en"
 );
+my $credentials = ();
 my $hosts = ();
+
+sub parse_credentials {
+  my $file = $ENV{"HOME"} . "/.rdp/credentials";
+  $credentials = XMLin($file, KeyAttr => { credentials => "id" });
+}
+  
+sub parse_hosts {
+  my $file = $ENV{"HOME"} . "/.rdp/hosts";
+  $hosts = XMLin($file);
+}
 
 sub print_hosts_menu {
   my ($caption, $id) = @_;
@@ -64,6 +76,10 @@ sub print_execute_item {
 
 # loading the config file
 Config::Simple->import_from($ENV{"HOME"} . "/.rdp/config", \%config);
+
+# parse credentials and hosts
+parse_credentials();
+parse_hosts();
 
 # print the openbox xml menu to console
 say "<openbox_pipe_menu>";
