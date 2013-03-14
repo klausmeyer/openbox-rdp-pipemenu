@@ -54,7 +54,6 @@ sub print_hosts {
     my $group = $_;
     print_hosts_group($group->{"caption"}, create_id($group->{"caption"}), $group->{"host"}, $group->{"group"});
   }
-  exit;
 }
 
 sub print_hosts_group {
@@ -67,6 +66,10 @@ sub print_hosts_group {
     print_host_entry($host->{"caption"}, $host->{"hostname"}, $credentials->{"domain"}, $credentials->{"user"}, $credentials->{"password"});
   }
   # print all subgroups
+  foreach(@{$subgroups}) {
+  	my $group = $_;
+	print_hosts_group($group->{"caption"}, create_id($group->{"id"}), $group->{"host"}, $group->{"group"});
+  }
   say "</menu>";
   say "<separator/>";
 }
