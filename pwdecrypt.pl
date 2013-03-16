@@ -39,7 +39,7 @@ sub blowfish_padding {
 
 sub blowfish_unpadding {
   my $text = shift;
-  $text =~ s/\x01+$//g;
+  $text =~ s/\x00+$//g;
   return $text;
 }
 
