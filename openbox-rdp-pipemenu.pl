@@ -35,7 +35,7 @@ my $hosts = ();
 sub create_id {
   my $caption = shift;
   $caption = lc($caption);
-  $caption =~ s/[^a-z0-9]//g;
+  $caption =~ s/[^a-z0-9\-]//g;
   return $caption;
 }
 
@@ -70,8 +70,8 @@ sub print_hosts_group {
   }
   # print all subgroups
   foreach(@{$subgroups}) {
-  	my $group = $_;
-    print_hosts_group($group->{"caption"}, create_id($group->{"id"}), $group->{"host"}, $group->{"group"});
+    my $group = $_;
+    print_hosts_group($group->{"caption"}, create_id($id . "-" . $group->{"caption"}), $group->{"host"}, $group->{"group"});
   }
   say "</menu>";
   say "<separator/>";
