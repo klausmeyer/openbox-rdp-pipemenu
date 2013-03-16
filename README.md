@@ -12,6 +12,7 @@ GPLv2, see [LICENCE.txt](LICENCE.txt)
 * perl >= 5.10 (Installed by default on most Linux/Unix Systems)
 * Config::Simple (Debian: libconfig-simple-perl)
 * XML::Simple (Debian: libxml-simple-perl)
+* Crypt::Blowfish (Debian: libcrypt-blowfish-perl)
 * openbox (not really, but it would be pointless without)
 
 ## Useage
