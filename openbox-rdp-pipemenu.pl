@@ -79,7 +79,7 @@ sub print_hosts_group {
 
 sub print_host_entry {
   my ($caption, $hostname, $domain, $username, $password) = @_;
-  print_execute_item($caption, "rdesktop -u $domain\\$username -p $password -z -g $config{'resolution'} -k $config{'keyboard_layout'} $hostname");
+  print_execute_item($caption, "rdesktop -u $domain\\\\$username -p $password -z -g $config{'resolution'} -k $config{'keyboard_layout'} $hostname");
 }
 
 sub print_execute_item {
