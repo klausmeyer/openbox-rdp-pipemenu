@@ -58,7 +58,7 @@ Format (XML):
 		<credentials id="unique_id">
 			<domain>domain- or computername</domain>
 			<user>name of the user to log in as</user>
-			<password>password of the user in plaintext</password>
+			<password>password of the user encrypted with blowfish (use pwcrypt.pl)</password>
 		</credentials>
 		[...]
 	</root>
