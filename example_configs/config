@@ -1,3 +1,4 @@
 editor: geany
 resolution: 1024x768
 keyboard_layout: en
+crypt_key: mytestblowfishkey

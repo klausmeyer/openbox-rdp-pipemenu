@@ -23,6 +23,8 @@ use 5.010;
 use Data::Dumper;
 use Config::Simple;
 use XML::Simple;
+use Crypt::Blowfish;
+use MIME::Base64;
 
 my %config = (
   "editor" => "geany",
@@ -39,9 +41,50 @@ sub create_id {
   return $caption;
 }
 
+sub blowfish_padding {
+  my $text = shift;
+  my $step = 8;
+  my $mod = length($text) % $step;
+  if($mod != 0) {
+    my $padding = $step - $mod;
+    $text = $text . ("\x00" x $padding);
+  }
+  return $text;
+}
+
+sub blowfish_unpadding {
+  my $text = shift;
+  $text =~ s/\x00+$//g;
+  return $text;
+}
+
+sub blowfish_decrypt {
+  my ($text, $key) = @_;
+  my $cipher = new Crypt::Blowfish blowfish_padding($key);
+  my $crypted = decode_base64($text);
+  my $plain = "";
+  # deencrypt text using blowfish in 8 byte parts
+  my $offset = 0;
+  my $junk_size = 8;
+  my $junk = "";
+  do {
+    $junk = substr($crypted, $offset, $junk_size);
+    if(length($junk) > 0) {
+      $plain .= $cipher->decrypt(blowfish_padding($junk));
+      $offset += $junk_size;
+    }
+  }
+  until(length($junk) < $junk_size);
+  return blowfish_unpadding($plain);
+}
+
 sub parse_credentials {
   my $file = $ENV{"HOME"} . "/.rdp/credentials";
   $credentials = XMLin($file, KeyAttr => { credentials => "id" });
+  # decrypt all passwords
+  foreach my $key ( keys %{$credentials->{"credentials"}}) {
+    $credentials->{"credentials"}->{$key}->{"password"} = blowfish_decrypt($credentials->{"credentials"}->{$key}->{"password"}, $config{'crypt_key'});
+  }
 }
   
 sub parse_hosts {
